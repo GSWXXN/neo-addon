@@ -8,7 +8,7 @@ LUCI_TITLE:=LuCI for Zerotier
 LUCI_DEPENDS:=+zerotier +jsonfilter +ucode
 LUCI_PKGARCH:=all
 
-PKG_VERSION:=2.0.3
+PKG_VERSION:=2.0.4
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
