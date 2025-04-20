@@ -59,8 +59,12 @@ define Package/tailscale/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/tailscaled $(1)/usr/sbin
 	$(LN) tailscaled $(1)/usr/sbin/tailscale
+ifeq ($(CONFIG_PACKAGE_luci-app-tailscale),y)
+	# No additional operations.
+else
 	$(INSTALL_BIN) ./files//tailscale.init $(1)/etc/init.d/tailscale
 	$(INSTALL_DATA) ./files//tailscale.conf $(1)/etc/config/tailscale
+endif
 endef
 
 $(eval $(call BuildPackage,tailscale))
