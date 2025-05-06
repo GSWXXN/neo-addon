@@ -52,9 +52,9 @@ jobs:
 
     - name: Download & Unpack SDK
       run: |
-        wget ${SDK_URL}${SDK_NAME}.tar.xz
+        wget ${SDK_URL}${SDK_NAME}.tar.xz || wget ${SDK_URL}${SDK_NAME}.tar.zst
         mkdir openwrt
-        tar -xJf ${SDK_NAME}.tar.xz --strip-components=1 -C openwrt
+        tar -xJf ${SDK_NAME}.tar.xz --strip-components=1 -C openwrt || tar -I zstd -xf ${SDK_NAME}.tar.zst --strip-components=1 -C openwrt
         cd openwrt
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
 
@@ -100,7 +100,7 @@ jobs:
         cp -r ../$TARGET package
         make package/$TARGET/compile -i -j$(nproc) V=99
         mkdir -p $GITHUB_WORKSPACE/release
-        mv $(ls -1 ./bin/*/*/*/*${TARGET##*-}*ipk) $GITHUB_WORKSPACE/release/
+        mv $(ls -1 ./bin/*/*/*/*${TARGET##*-}*ipk) $GITHUB_WORKSPACE/release/ || mv $(ls -1 ./bin/*/*/*/*${TARGET##*-}*apk) $GITHUB_WORKSPACE/release/
         cd $GITHUB_WORKSPACE/release
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         
@@ -136,9 +136,3 @@ jobs:
           delete_tags: true
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Delete Artifacts
-      uses: geekyeggo/delete-artifact@v2
-      with:
-         name: |
-            bin-archive
