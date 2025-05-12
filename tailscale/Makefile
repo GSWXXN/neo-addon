@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tailscale
-PKG_VERSION:=1.82.0
-PKG_RELEASE:=1
+PKG_VERSION:=1.82.5
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/tailscale/tailscale/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=d846c1064dc9fb23559e260c1faf3d36b4bdda5457b1e069dceec3add8bb7e55
+PKG_HASH:=09685251057c96b7aa01e62b982a90824559ffd7113c8b69b9fc454c611f40a9
 
 PKG_MAINTAINER:=Zephyr Lykos <self@mochaa.ws>, \
 		Sandro Jäckel <sandro.jaeckel@gmail.com>
@@ -56,15 +56,13 @@ define Package/tailscale/conffiles
 endef
 
 define Package/tailscale/install
-	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config
+	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/tailscaled $(1)/usr/sbin
 	$(LN) tailscaled $(1)/usr/sbin/tailscale
-ifeq ($(CONFIG_PACKAGE_luci-app-tailscale),y)
-	# No additional operations.
-else
 	$(INSTALL_BIN) ./files//tailscale.init $(1)/etc/init.d/tailscale
 	$(INSTALL_DATA) ./files//tailscale.conf $(1)/etc/config/tailscale
-endif
+	$(INSTALL_BIN) ./files//tailscale.helper $(1)/usr/sbin/tailscale_helper
+	$(INSTALL_BIN) ./files//tailscale.iface $(1)/etc/hotplug.d/iface/40-tailscale
 endef
 
 $(eval $(call BuildPackage,tailscale))
