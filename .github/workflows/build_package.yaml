@@ -34,7 +34,7 @@ jobs:
     env:
       UPLOAD_RELEASE: true
       TZ: Asia/Shanghai
-    if: github.repository_owner=='asvow'
+
 
     steps:
     - name: Checkout
